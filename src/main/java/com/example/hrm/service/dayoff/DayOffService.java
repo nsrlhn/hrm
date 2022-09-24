@@ -1,0 +1,46 @@
+package com.example.hrm.service.dayoff;
+
+import com.example.hrm.model.dayoff.DayOff;
+import com.example.hrm.model.dayoff.DayOffStatus;
+import com.example.hrm.model.employee.Employee;
+import com.example.hrm.repository.dayoff.DayOffRepository;
+import com.example.hrm.request.dayoff.DayOffTakeRequest;
+import com.example.hrm.service.employee.EmployeeReadService;
+import com.example.hrm.util.dayoff.DayOffUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class DayOffService {
+
+    private final DayOffRepository repository;
+    private final DayOffCheckService checkService;
+    private final DayOffReadService readService;
+    private final EmployeeReadService employeeService;
+
+    public DayOff take(DayOffTakeRequest request) {
+        int amount = DayOffUtil.calculateAmount(request.getDateFrom(), request.getDateTo());
+
+        // Get
+        Employee employee = employeeService.getOrThrow(request.getEmployeeId());
+
+        // Check
+        checkService.checkDates(request.getDateFrom(), request.getDateTo());
+        // TODO : check amount
+        // TODO : check existence
+        checkService.checkPermission(employee, amount);
+
+        // Prepare
+        DayOff dayOff = new DayOff();
+        dayOff.setEmployee(employee);
+        dayOff.setDateFrom(request.getDateFrom());
+        dayOff.setDateTo(request.getDateTo());
+        dayOff.setAmount(amount);
+        dayOff.setStatus(DayOffStatus.WAITING);
+
+        // Save
+        return repository.save(dayOff);
+    }
+
+}
