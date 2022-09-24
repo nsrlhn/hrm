@@ -28,6 +28,9 @@ public class DayOff extends SimpleEntity {
     private LocalDate dateTo;
 
     @Column(nullable = false)
+    private Integer amount;
+
+    @Column(nullable = false)
     @Comment(DayOffStatus.DESCRIPTION)
     private DayOffStatus status;
 }

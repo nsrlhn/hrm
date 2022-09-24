@@ -9,7 +9,6 @@ import com.example.hrm.repository.dayoff.DayOffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -21,13 +20,14 @@ public class DayOffReadService {
     /**
      * Calculation made by assuming day-off is taken including both dateFrom and dateTo
      */
-    public long getDayOffUsed(Employee employee) {
+    public int getDayOffUsed(Employee employee) {
         // TODO : improve code with Stream expression
+        // TODO : improve code performance with better query
 
         List<DayOff> approved = repository.findAllByEmployeeAndStatus(employee, DayOffStatus.APPROVED);
-        long dayOffUsed = 0;
+        int dayOffUsed = 0;
         for (DayOff dayOff : approved) {
-            dayOffUsed += ChronoUnit.DAYS.between(dayOff.getDateFrom(), dayOff.getDateTo()) + 1;
+            dayOffUsed += dayOff.getAmount();
         }
         return dayOffUsed;
     }

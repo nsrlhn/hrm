@@ -11,8 +11,8 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class EmployeeCalculationService {
 
-    public long getDayOffEarned(Employee employee) {
-        long years = this.getYearsOfEmployment(employee);
+    public int getDayOffEarned(Employee employee) {
+        int years = this.getYearsOfEmployment(employee);
 
         // Permissions
         final int P1 = 5;
@@ -40,7 +40,7 @@ public class EmployeeCalculationService {
         return P1 + (Y2 - Y1) * P2 + (Y3 - Y2) * P3 + (years - Y3) * P4;
     }
 
-    public long getYearsOfEmployment(Employee employee) {
-        return ChronoUnit.YEARS.between(employee.getRecruitment(), LocalDate.now());
+    public int getYearsOfEmployment(Employee employee) {
+        return (int) ChronoUnit.YEARS.between(employee.getRecruitment(), LocalDate.now());
     }
 }

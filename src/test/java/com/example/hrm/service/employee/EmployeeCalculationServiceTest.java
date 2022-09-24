@@ -44,7 +44,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(-1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isZero();
@@ -59,7 +59,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ZERO);
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1);
@@ -74,7 +74,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(1).minusDays(1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1);
@@ -89,7 +89,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + P2);
@@ -104,7 +104,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(Y2 + 1).minusDays(1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + Y2 * P2);
@@ -119,7 +119,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(Y2 + 1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + Y2 * P2 + P3);
@@ -134,7 +134,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(Y3 + 1).minusDays(1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + Y2 * P2 + (Y3 - Y2) * P3);
@@ -149,7 +149,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(Period.ofYears(Y3 + 1));
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + Y2 * P2 + (Y3 - Y2) * P3 + P4);
@@ -164,7 +164,7 @@ class EmployeeCalculationServiceTest {
         Employee employee = prepareEmployee(LONG_PERIOD);
 
         // Act
-        long years = service.getDayOffEarned(employee);
+        int years = service.getDayOffEarned(employee);
 
         // Assert
         assertThat(years).isEqualTo(P1 + Y2 * P2 + (Y3 - Y2) * P3 + (50 - Y3) * P4);

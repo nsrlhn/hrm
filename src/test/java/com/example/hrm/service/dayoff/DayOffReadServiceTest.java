@@ -81,6 +81,7 @@ class DayOffReadServiceTest {
         dayOff.setEmployee(EMPLOYEE);
         dayOff.setDateFrom(LocalDate.now());
         dayOff.setDateTo(LocalDate.now().plusDays(days - 1));
+        dayOff.setAmount(days);
         dayOff.setStatus(DayOffStatus.APPROVED);
         return dayOff;
     }
