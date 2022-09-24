@@ -18,13 +18,16 @@ public class DayOffReadService {
 
     private final DayOffRepository repository;
 
+    /**
+     * Calculation made by assuming day-off is taken including both dateFrom and dateTo
+     */
     public long getDayOffUsed(Employee employee) {
         // TODO : improve code with Stream expression
 
         List<DayOff> approved = repository.findAllByEmployeeAndStatus(employee, DayOffStatus.APPROVED);
         long dayOffUsed = 0;
         for (DayOff dayOff : approved) {
-            dayOffUsed += ChronoUnit.DAYS.between(dayOff.getDateFrom(), dayOff.getDateTo());
+            dayOffUsed += ChronoUnit.DAYS.between(dayOff.getDateFrom(), dayOff.getDateTo()) + 1;
         }
         return dayOffUsed;
     }

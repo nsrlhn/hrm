@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -25,8 +24,6 @@ class DayOffReadServiceTest {
 
     private static final long ID = 1L;
     private static final Employee EMPLOYEE = new Employee();
-    private static final Period PERIOD1 = Period.ofDays(2);
-    private static final Period PERIOD2 = Period.ofDays(3);
 
     @Autowired
     private DayOffReadService service;
@@ -51,14 +48,20 @@ class DayOffReadServiceTest {
     @Test
     void givenEmployee_WhenGetDayOffUsed_ShouldCalculateDayOffUsed() {
         // Arrange
+        int days1 = 2;
+        int days2 = 3;
+
         Mockito.when(repository.findAllByEmployeeAndStatus(EMPLOYEE, DayOffStatus.APPROVED))
-                .thenReturn(Arrays.asList(prepareDayOff(PERIOD1), prepareDayOff(PERIOD2)));
+                .thenReturn(Arrays.asList(
+                        prepareDayOffByDays(days1),
+                        prepareDayOffByDays(days2)
+                ));
 
         // Act
         long result = service.getDayOffUsed(EMPLOYEE);
 
         // Assert
-        assertThat(result).isEqualTo(PERIOD1.getDays() + PERIOD2.getDays());
+        assertThat(result).isEqualTo(days1 + days2);
     }
 
     @Test
@@ -73,11 +76,11 @@ class DayOffReadServiceTest {
         assertThat(exception.getMessage()).contains(DayOffExceptionCode.NOT_FOUND.toString());
     }
 
-    private DayOff prepareDayOff(Period period) {
+    private DayOff prepareDayOffByDays(int days) {
         DayOff dayOff = new DayOff();
         dayOff.setEmployee(EMPLOYEE);
         dayOff.setDateFrom(LocalDate.now());
-        dayOff.setDateTo(LocalDate.now().plus(period));
+        dayOff.setDateTo(LocalDate.now().plusDays(days - 1));
         dayOff.setStatus(DayOffStatus.APPROVED);
         return dayOff;
     }
