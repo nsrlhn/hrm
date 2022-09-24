@@ -4,6 +4,7 @@ import com.example.hrm.model.dayoff.DayOff;
 import com.example.hrm.model.dayoff.DayOffStatus;
 import com.example.hrm.model.employee.Employee;
 import com.example.hrm.repository.dayoff.DayOffRepository;
+import com.example.hrm.request.dayoff.DayOffDecideRequest;
 import com.example.hrm.request.dayoff.DayOffTakeRequest;
 import com.example.hrm.service.employee.EmployeeReadService;
 import com.example.hrm.util.dayoff.DayOffUtil;
@@ -19,7 +20,24 @@ public class DayOffService {
     private final DayOffReadService readService;
     private final EmployeeReadService employeeService;
 
+    public DayOff decide(Long id, DayOffDecideRequest request) {
+        // Get
+        DayOff dayOff = readService.getOrThrow(id);
+
+        // Check
+        checkService.checkProcessStep(dayOff.getStatus());
+        checkService.checkDates(dayOff.getDateFrom(), dayOff.getDateTo());
+        checkService.checkPermission(dayOff.getEmployee(), dayOff.getAmount());
+
+        // Prepare
+        dayOff.setStatus(request.getStatus());
+
+        // Save
+        return repository.save(dayOff);
+    }
+
     public DayOff take(DayOffTakeRequest request) {
+        // Calculate
         int amount = DayOffUtil.calculateAmount(request.getDateFrom(), request.getDateTo());
 
         // Get

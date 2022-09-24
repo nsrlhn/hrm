@@ -4,6 +4,7 @@ import com.example.hrm.model.dayoff.DayOff;
 import com.example.hrm.model.dayoff.DayOffStatus;
 import com.example.hrm.model.employee.Employee;
 import com.example.hrm.repository.dayoff.DayOffRepository;
+import com.example.hrm.request.dayoff.DayOffDecideRequest;
 import com.example.hrm.request.dayoff.DayOffTakeRequest;
 import com.example.hrm.service.employee.EmployeeReadService;
 import com.example.hrm.util.dayoff.DayOffUtil;
@@ -40,6 +41,20 @@ class DayOffServiceTest {
     private EmployeeReadService employeeService;
 
     @Test
+    void givenParameters_WhenDecide_ShouldUpdate() {
+        // Arrange
+        Mockito.when(repository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        Mockito.when(readService.getOrThrow(ID)).thenReturn(prepareDayOff());
+
+        // Act
+        DayOff dayOff = service.decide(ID, prepareDecideRequest());
+
+        // Assert
+        Mockito.verify(repository).save(any());
+        assertThat(dayOff.getStatus()).isEqualTo(DayOffStatus.APPROVED);
+    }
+
+    @Test
     void givenParameters_WhenTake_ShouldSave() {
         // Arrange
         Mockito.when(employeeService.getOrThrow(ID)).thenReturn(EMPLOYEE);
@@ -50,12 +65,23 @@ class DayOffServiceTest {
 
         // Assert
         Mockito.verify(repository).save(any());
-        assertThat(dayOff).hasNoNullFieldsOrPropertiesExcept("id");
-        assertThat(dayOff.getEmployee()).isSameAs(EMPLOYEE);
-        assertThat(dayOff.getDateFrom()).isSameAs(DATE_FROM);
-        assertThat(dayOff.getDateTo()).isSameAs(DATE_TO);
-        assertThat(dayOff.getAmount()).isSameAs(DayOffUtil.calculateAmount(DATE_FROM, DATE_TO));
-        assertThat(dayOff.getStatus()).isSameAs(DayOffStatus.WAITING);
+        assertThat(dayOff).hasNoNullFieldsOrPropertiesExcept("id").isEqualTo(prepareDayOff());
+    }
+
+    private DayOff prepareDayOff() {
+        DayOff dayOff = new DayOff();
+        dayOff.setEmployee(EMPLOYEE);
+        dayOff.setDateFrom(DATE_FROM);
+        dayOff.setDateTo(DATE_TO);
+        dayOff.setAmount(DayOffUtil.calculateAmount(DATE_FROM, DATE_TO));
+        dayOff.setStatus(DayOffStatus.WAITING);
+        return dayOff;
+    }
+
+    private DayOffDecideRequest prepareDecideRequest() {
+        DayOffDecideRequest request = new DayOffDecideRequest();
+        request.setStatus(DayOffStatus.APPROVED);
+        return request;
     }
 
     private DayOffTakeRequest prepareTakeRequest() {
