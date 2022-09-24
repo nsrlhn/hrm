@@ -27,7 +27,7 @@ class EmployeeReadServiceTest {
     private EmployeeRepository repository;
 
     @Test
-    void givenAvailableEmployeeIdShouldReturn() {
+    void givenAvailableEmployeeId_WhenGetOrThrow_ShouldReturn() {
         // Arrange
         Employee employee = new Employee();
         Mockito.when(repository.findById(ID)).thenReturn(Optional.of(employee));
@@ -41,7 +41,7 @@ class EmployeeReadServiceTest {
     }
 
     @Test
-    void givenUnavailableEmployeeIdShouldThrowException() {
+    void givenUnavailableEmployeeId_WhenGetOrThrow_ShouldThrowException() {
         // Arrange
         Mockito.when(repository.findById(ID)).thenReturn(Optional.empty());
 

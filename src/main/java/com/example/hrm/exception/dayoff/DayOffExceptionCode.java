@@ -8,4 +8,6 @@ public enum DayOffExceptionCode implements ExceptionCode {
     DATE_IS_PAST,
     ALREADY_TAKEN,
     EXCESSIVE_DURATION,
+    NOT_FOUND,
+    ALREADY_DECIDED,
 }
