@@ -32,12 +32,12 @@ public class EmployeeCalculationService {
             return P1;
         }
         if (years <= Y2) {
-            return P1 + years * P2;
+            return years * P2;
         }
         if (years <= Y3) {
-            return P1 + (Y2 - Y1) * P2 + (years - Y2) * P3;
+            return (Y2 - Y1) * P2 + (years - Y2) * P3;
         }
-        return P1 + (Y2 - Y1) * P2 + (Y3 - Y2) * P3 + (years - Y3) * P4;
+        return (Y2 - Y1) * P2 + (Y3 - Y2) * P3 + (years - Y3) * P4;
     }
 
     public int getYearsOfEmployment(Employee employee) {
