@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,22 +45,12 @@ class DayOffReadServiceTest {
     }
 
     @Test
-    void givenEmployee_WhenGetDayOffUsed_ShouldCalculateDayOffUsed() {
-        // Arrange
-        int days1 = 2;
-        int days2 = 3;
-
-        Mockito.when(repository.findAllByEmployeeAndStatus(EMPLOYEE, DayOffStatus.APPROVED))
-                .thenReturn(Arrays.asList(
-                        prepareDayOffByDays(days1),
-                        prepareDayOffByDays(days2)
-                ));
-
+    void givenNullResult_WhenGetDayOffUsed_ShouldReturnZero() {
         // Act
-        long result = service.getDayOffUsed(EMPLOYEE);
+        int result = service.getDayOffUsed(EMPLOYEE);
 
         // Assert
-        assertThat(result).isEqualTo(days1 + days2);
+        assertThat(result).isZero();
     }
 
     @Test

@@ -24,6 +24,7 @@ class DayOffCheckServiceTest {
     private static final LocalDate DATE_TO = DATE_FROM.plusDays(1);
     private static final Employee EMPLOYEE = new Employee();
     private static final int RANDOM_NUMBER = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE / 2);
+    private static final long ID = 1L;
 
     @Autowired
     private DayOffCheckService service;
@@ -32,6 +33,27 @@ class DayOffCheckServiceTest {
     private DayOffReadService readService;
     @MockBean
     private EmployeeCalculationService calculationService;
+
+    @Test
+    void givenAlreadyExistRequest_WhenCheckExistence_ShouldThrow() {
+        // Assert
+        Mockito.when(readService.isOverlap(ID, DATE_FROM, DATE_TO)).thenReturn(true);
+
+        // Act
+        Exception exception = assertThrows(BadRequestException.class, () -> service.checkExistence(ID, DATE_FROM, DATE_TO));
+
+        // Assert
+        assertThat(exception.getMessage()).contains(DayOffExceptionCode.ALREADY_REQUESTED.toString());
+    }
+
+    @Test
+    void givenAmountIsZero_WhenCheckAmount_ShouldThrow() {
+        // Act
+        Exception exception = assertThrows(BadRequestException.class, () -> service.checkAmount(0));
+
+        // Assert
+        assertThat(exception.getMessage()).contains(DayOffExceptionCode.INVALID_AMOUNT.toString());
+    }
 
     @Test
     void givenDateFromIsAfterDateTo_WhenCheckDates_ShouldThrow() {

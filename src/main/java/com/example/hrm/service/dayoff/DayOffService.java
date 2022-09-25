@@ -45,8 +45,8 @@ public class DayOffService {
 
         // Check
         checkService.checkDates(request.getDateFrom(), request.getDateTo());
-        // TODO : check amount
-        // TODO : check existence
+        checkService.checkAmount(amount);
+        checkService.checkExistence(employee.getId(), request.getDateFrom(), request.getDateTo());
         checkService.checkPermission(employee, amount);
 
         // Prepare

@@ -27,6 +27,12 @@ class DayOffServiceTest {
     private static final Employee EMPLOYEE = new Employee();
     private static final LocalDate DATE_FROM = LocalDate.now();
     private static final LocalDate DATE_TO = LocalDate.now();
+    private static final DayOffStatus STATUS = DayOffStatus.WAITING;
+    private static final int AMOUNT = DayOffUtil.calculateAmount(DATE_FROM, DATE_TO);
+
+    static {
+        EMPLOYEE.setId(ID);
+    }
 
     @Autowired
     private DayOffService service;
@@ -41,6 +47,20 @@ class DayOffServiceTest {
     private EmployeeReadService employeeService;
 
     @Test
+    void givenParameters_WhenDecide_ShouldCheck() {
+        // Arrange
+        Mockito.when(readService.getOrThrow(ID)).thenReturn(prepareDayOff());
+
+        // Act
+        service.decide(ID, prepareDecideRequest());
+
+        // Assert
+        Mockito.verify(checkService).checkProcessStep(STATUS);
+        Mockito.verify(checkService).checkDates(DATE_FROM, DATE_TO);
+        Mockito.verify(checkService).checkPermission(EMPLOYEE, AMOUNT);
+    }
+
+    @Test
     void givenParameters_WhenDecide_ShouldUpdate() {
         // Arrange
         Mockito.when(repository.save(any())).then(AdditionalAnswers.returnsFirstArg());
@@ -52,6 +72,21 @@ class DayOffServiceTest {
         // Assert
         Mockito.verify(repository).save(any());
         assertThat(dayOff.getStatus()).isEqualTo(DayOffStatus.APPROVED);
+    }
+
+    @Test
+    void givenParameters_WhenTake_ShouldCheck() {
+        // Arrange
+        Mockito.when(employeeService.getOrThrow(ID)).thenReturn(EMPLOYEE);
+
+        // Act
+        service.take(prepareTakeRequest());
+
+        // Assert
+        Mockito.verify(checkService).checkDates(DATE_FROM, DATE_TO);
+        Mockito.verify(checkService).checkAmount(AMOUNT);
+        Mockito.verify(checkService).checkExistence(ID, DATE_FROM, DATE_TO);
+        Mockito.verify(checkService).checkPermission(EMPLOYEE, AMOUNT);
     }
 
     @Test
@@ -73,8 +108,8 @@ class DayOffServiceTest {
         dayOff.setEmployee(EMPLOYEE);
         dayOff.setDateFrom(DATE_FROM);
         dayOff.setDateTo(DATE_TO);
-        dayOff.setAmount(DayOffUtil.calculateAmount(DATE_FROM, DATE_TO));
-        dayOff.setStatus(DayOffStatus.WAITING);
+        dayOff.setAmount(AMOUNT);
+        dayOff.setStatus(STATUS);
         return dayOff;
     }
 

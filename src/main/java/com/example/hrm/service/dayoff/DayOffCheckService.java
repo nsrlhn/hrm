@@ -17,12 +17,24 @@ public class DayOffCheckService {
     private final DayOffReadService readService;
     private final EmployeeCalculationService calculationService;
 
+    public void checkAmount(int dayOffAmount) {
+        if (dayOffAmount <= 0) {
+            throw new BadRequestException(DayOffExceptionCode.INVALID_AMOUNT);
+        }
+    }
+
     public void checkDates(LocalDate dateFrom, LocalDate dateTo) {
         if (dateFrom.isBefore(LocalDate.now())) {
             throw new BadRequestException(DayOffExceptionCode.DATE_IS_PAST);
         }
         if (dateFrom.isAfter(dateTo)) {
             throw new BadRequestException(DayOffExceptionCode.DATE_FROM_IS_AFTER_DATE_TO);
+        }
+    }
+
+    public void checkExistence(Long employeeId, LocalDate dateFrom, LocalDate dateTo) {
+        if (readService.isOverlap(employeeId, dateFrom, dateTo)) {
+            throw new BadRequestException(DayOffExceptionCode.ALREADY_REQUESTED);
         }
     }
 

@@ -10,4 +10,6 @@ public enum DayOffExceptionCode implements ExceptionCode {
     EXCESSIVE_DURATION,
     NOT_FOUND,
     ALREADY_DECIDED,
+    INVALID_AMOUNT,
+    ALREADY_REQUESTED,
 }
